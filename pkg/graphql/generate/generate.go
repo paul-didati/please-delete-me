@@ -14,8 +14,8 @@ import (
 	"text/template"
 	"time"
 
-	"github.com/didati-data-enabled/data-core/pkg/graphql/resolutions"
-	"github.com/didati-data-enabled/data-core/pkg/graphql/typer"
+	"github.com/paul-didati/please-delete-me/pkg/graphql/resolutions"
+	"github.com/paul-didati/please-delete-me/pkg/graphql/typer"
 
 	_ "embed"
 )

@@ -6,9 +6,9 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/didati-data-enabled/data-core/pkg/graphql/generate"
-	_ "github.com/didati-data-enabled/data-core/pkg/graphql/resolutions"
-	"github.com/didati-data-enabled/data-core/pkg/graphql/typer"
+	"github.com/paul-didati/please-delete-me/pkg/graphql/generate"
+	_ "github.com/paul-didati/please-delete-me/pkg/graphql/resolutions"
+	"github.com/paul-didati/please-delete-me/pkg/graphql/typer"
 
 	"github.com/graph-gophers/graphql-go"
 )
