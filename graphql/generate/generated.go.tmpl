@@ -1,0 +1,62 @@
+package main 
+
+import (
+  "context"
+  "fmt"
+  graphql "github.com/graph-gophers/graphql-go"
+
+  "github.com/didati-data-enabled/data-core/pkg/graphql/resolutions"
+)
+
+// Ensure imported package is used even if we never generated a graphql internal type
+var _ = graphql.ParseSchema
+
+var outterResovler resolutions.Resolver
+
+func Create(r resolutions.Resolver) any {
+  outterResovler = r
+  return &QueryResolver{}
+}
+
+{{range $idx, $val := .Resolvers}}
+
+{{range $val.Implements}}
+func (r *{{.From}}Resolver) To{{.To}}() (*{{$val.Name}}Resolver, bool) {
+  zero := new({{$val.Name}}Resolver)
+	return zero, true
+}
+{{end}}
+
+{{if $val.Interface}}
+type {{$val.Name}}Resolver struct{
+  {{$val.Name}}ResolverIF
+}
+
+type {{$val.Name}}ResolverIF interface{
+{{range $val.Fields}}
+  {{.Field}}(ctx context.Context{{if .HasArg}}, args struct{ {{range .Args -}}{{.Name}} {{.Type}}; {{end}}}{{end}}) ({{.ResponseType}}, error)
+{{end}}
+}
+{{else}}
+type {{$val.Name}}Resolver struct{}
+
+{{range $val.Fields}}
+func (_ *{{$val.Name}}Resolver) {{.Field}}(ctx context.Context{{if .HasArg}}, args struct{ {{range .Args -}}{{.Name}} {{.Type}}; {{end}}}{{end}}) ({{.ResponseType}}, error) {
+	
+  var zero {{.ResponseType}}
+
+  v, err := outterResovler.Resolve(ctx, "{{$val.Name}}Resolver", "{{.Field}}", {{if .HasArg}}args{{else}}nil{{end}}, zero, {{.Object}}, {{.List}}, {{.Nullable}})
+  if err != nil {
+    return zero, err
+  }
+
+  actual, ok := v.({{.ResponseType}})
+  if !ok {
+    return zero, fmt.Errorf("resolver produced unexpected type: got %T wanted %T", v, zero)
+  }
+
+  return actual, nil
+}
+{{end}}
+{{end -}}
+{{end -}}
